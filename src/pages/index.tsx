@@ -1,9 +1,19 @@
-import { Grid, GridItem, Text, Flex, Stack, Button } from "@chakra-ui/react";
-import type { NextPage } from "next";
+import { Button, Flex, Grid, GridItem, Stack, Table, TableCaption, TableContainer, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from "@chakra-ui/react";
+import type { GetStaticProps } from "next";
 import { Header } from "../components/Header";
 import { SideBar } from "../components/SideBar";
+import { api } from "../services/api";
 
-const Home: NextPage = () => {
+type Order = {
+  id: number;
+  
+}
+
+type HomeProps = {
+  order: Order[];
+}
+
+export default function Home({ order } : HomeProps) {
   return (
     <Grid
       templateAreas={`"nav header"
@@ -38,12 +48,71 @@ const Home: NextPage = () => {
             </Stack>
 
             <Button colorScheme='blue' size="sm" fontSize="xs" fontWeight="700">NOVO PEDIDO</Button>
-
+            
           </Stack>
         </Flex>
+         
+        <TableContainer m="4" pl="4" pr="6">
+          <Table variant='striped' colorScheme='teal'>
+            <TableCaption>Imperial to metric conversion factors</TableCaption>
+            <Thead>
+              <Tr>
+                <Th isNumeric>#</Th>
+                <Th>Cliente</Th>
+                <Th>Telefone</Th>
+                <Th>Pagamento</Th>
+                <Th>Pago</Th>
+                <Th>Data e Hora</Th>
+                <Th>Status</Th>
+                <Th isNumeric>Total</Th>
+                <Th>Data</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+            {order.map((item) => {
+            return (
+              <Tr key={item.id}>
+                <Td isNumeric>{ item.id}</Td>
+                <Td isNumeric>{ item.id}</Td>
+                <Td isNumeric>{ item.id}</Td>
+                <Td isNumeric>{ item.id}</Td>
+                <Td isNumeric>{ item.id}</Td>
+                <Td isNumeric>{ item.id}</Td>
+                <Td isNumeric>{ item.id}</Td>
+                <Td isNumeric>{ item.id}</Td>
+              </Tr>
+            );
+          })}
+            </Tbody>
+            <Tfoot>
+              <Tr>
+                <Th>To convert</Th>
+                <Th>into</Th>
+                <Th isNumeric>multiply by</Th>
+              </Tr>
+            </Tfoot>
+          </Table>
+        </TableContainer>
+ 
       </GridItem>
     </Grid>
   );
+
 };
 
-export default Home;
+export const getStaticProps: GetStaticProps = async () => {
+
+  const { data }  = await api.get('/plane')
+  const order = data.map((order: Order) => {
+    return {
+      id: order.id,
+    }
+  });
+
+
+  return {
+    props: {
+      order,
+    },
+  };
+};
